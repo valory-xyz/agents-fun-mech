@@ -53,8 +53,9 @@ openapi-spec-validator = "<0.5.0,>=0.4.0"
 replicate = "==0.15.7"
 moviepy = "==1.0.3"
 anthropic = "==0.21.3"
-google-api-python-client = "==2.95.0"
+google-api-python-client = "==1.12.1"
 tiktoken = "==0.7.0"
+httpx = "0.25.2"
 
 [tool.poetry.group.dev.dependencies]
 setuptools = "^78.0.1"
