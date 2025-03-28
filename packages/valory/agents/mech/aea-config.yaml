@@ -48,7 +48,9 @@ skills:
 - valory/termination_abci:0.1.0:bafybeig4stz7s6phndruvrgqptbc62ue2filttj4wbnempkur5ybso5edu
 - valory/transaction_settlement_abci:0.1.0:bafybeicvfbyp4lfqcohmvw6ozlvsbp2eugl2wxqxsdpp36ro7bk3waxjky
 - valory/websocket_client:0.1.0:bafybeif7rrvsu6z4evqkhblxj3u6wwv2eqou576hgkyoehxuj7cntw7o2m
-customs: []
+customs:
+- agents_fun/short_maker:0.1.0:bafybeidrbqt2mgrjqxyd7mff7dbwsxqjh5z3ix3l656yn5my573hclzmd4
+- agents_fun/stability_ai_request:0.1.0:bafybeidfyz4tqvx544gausycg6o5o2arbfbezpllvsf5taq6kgkt3gl7xy
 default_ledger: ethereum
 required_ledgers:
 - ethereum
@@ -85,6 +87,22 @@ dependencies:
     version: ==6.21.6
   open-aea-ledger-ethereum:
     version: ==1.63.0
+  openai:
+    version: ==1.30.2
+  replicate:
+    version: ==0.15.7
+  moviepy:
+    version: ==1.0.3
+  anthropic:
+    version: ==0.21.3
+  google-api-python-client:
+    version: ==1.12.1
+  tiktoken:
+    version: ==0.7.0
+  requests:
+    version: ==2.28.2
+  httpx:
+    version: ==0.25.2
 default_connection: null
 ---
 public_id: valory/websocket_client:0.1.0:bafybeiexove4oqyhoae5xmk2hilskthosov5imdp65olpgj3cfrepbouyy

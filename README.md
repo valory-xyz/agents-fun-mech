@@ -1,2 +1,1 @@
-# mech-tools-dev
-Development toolkit for the Mech ecosystem. Implements the core logic, supporting easy tools integration, streamlining their development and testing.
+This repo extends the [Mech Tools dev repo](https://github.com/valory-xyz/mech-tools-dev) for agents.fun.

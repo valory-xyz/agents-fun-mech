@@ -1,0 +1,28 @@
+name: short_maker
+author: agents_fun
+version: 0.1.0
+type: custom
+description: A tool to generate short videos from prompts.
+license: Apache-2.0
+aea_version: '>=1.0.0, <2.0.0'
+fingerprint:
+  __init__.py: bafybeidbtdhx4xszfatvfnpmmf3x3jzqq6raa6hl62dj6qmxlhouml4yha
+  short_maker.py: bafybeihxj7kr3iur7tqkbzedhqabhhbxrb2qtgf4p6rqwu6l66rcfbqzay
+fingerprint_ignore_patterns: []
+entry_point: short_maker.py
+callable: run
+dependencies:
+  openai:
+    version: ==1.30.2
+  replicate:
+    version: ==0.15.7
+  moviepy:
+    version: ==1.0.3
+  anthropic:
+    version: ==0.21.3
+  google-api-python-client:
+    version: ==1.12.1
+  requests:
+    version: ==2.28.1
+  open-aea-cli-ipfs:
+    version: ==1.63.0
