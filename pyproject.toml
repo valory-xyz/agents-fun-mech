@@ -3,10 +3,10 @@ requires = [ "poetry-core>=1.0.0",]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
-name = "agents-fun-mech"
+name = "agents.fun"
 version = "0.1.0"
 description = ""
-authors = [ "Adamantios Zaras <adamantios.zaras@valory.xyz>",]
+authors = [ "8baller <8ball030@gmail.com>", "David Vilela <dvilelaf@gmail.com>", "David Minarsch <david.minarsch@googlemail.com>", "Justice Mace <justice.mace@valory.xyz>", "Ardian Abazi <ardian.abazi@valory.xyz>", "Jose Moreira Sanchez <jose.moreira.sanchez@valory.xyz>", "Adamantios Zaras <adamantios.zaras@valory.xyz>", "Kahan Majmudar <kahan.m.btechi16@ahduni.edu.in>", ]
 readme = "README.md"
 repository = "https://github.com/valory-xyz/agents-fun-mech"
 keywords = [ "mech", "tool", "developer", "autonomy", "autonomous", "autonolas", "olas", "service", "multi", "agent",]

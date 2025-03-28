@@ -27,7 +27,7 @@ import functools
 
 import openai
 import anthropic
-import googleapiclient
+from googleapiclient.errors import HttpError as GoogleApiClientHttpError
 
 from moviepy.audio.fx.audio_fadeout import audio_fadeout
 from openai import OpenAI
@@ -80,7 +80,7 @@ def with_key_rotation(func: Callable):
                 api_keys.rotate("openai")
                 api_keys.rotate("openrouter")
                 return execute()
-            except googleapiclient.errors.HttpError as e:
+            except GoogleApiClientHttpError as e:
                 # try with a new key again
                 rate_limit_exceeded_code = 429
                 if e.status_code != rate_limit_exceeded_code:

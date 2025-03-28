@@ -1,9 +1,9 @@
 {
     "dev": {
-        "custom/agents_fun/short_maker/0.1.0": "bafybeicmtlz4drnxlkkje3kyinlduc4dysz6qufnyqam3awldfp5gdtwcm",
-        "custom/agents_fun/stability_ai_request/0.1.0": "bafybeig5hq3fnzy4rkyeeo3ozzvcso7pirfc5jfxm7qs5esdnljvlihf3m",
-        "agent/valory/mech/0.1.0": "bafybeif7xitupwvbfa5x2pjda57rezoisvgnjdd2qo57mz6e5xpx6vheee",
-        "service/valory/mech/0.1.0": "bafybeicv4pfbdausoda6hljzub6qlyuxtpvwoowwzhm4xekqciqk5lid6a"
+        "custom/agents_fun/short_maker/0.1.0": "bafybeidrbqt2mgrjqxyd7mff7dbwsxqjh5z3ix3l656yn5my573hclzmd4",
+        "custom/agents_fun/stability_ai_request/0.1.0": "bafybeidfyz4tqvx544gausycg6o5o2arbfbezpllvsf5taq6kgkt3gl7xy",
+        "agent/valory/mech/0.1.0": "bafybeidop2rto7srvkfydjytjsb46uoehu7agim5mmmmwtcsmtv5lyijqe",
+        "service/valory/mech/0.1.0": "bafybeiap4gfhcbw5knqmt5i7shzty6d7qfhpgciveqypzn7z4qm6tll75e"
     },
     "third_party": {
         "protocol/valory/acn_data_share/0.1.0": "bafybeih5ydonnvrwvy2ygfqgfabkr47s4yw3uqxztmwyfprulwfsoe7ipq",

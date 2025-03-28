@@ -1,4 +1,4 @@
-This repo extends the [Mech repo](https://github.com/valory-xyz/mech) for Eth Lisbon 2023.
+This repo extends the [Mech Tools dev repo](https://github.com/valory-xyz/mech-tools-dev) for Eth Lisbon 2023.
 
 <p align="center">
    <img src="./docs/images/mechs-logo.png" width=300>
