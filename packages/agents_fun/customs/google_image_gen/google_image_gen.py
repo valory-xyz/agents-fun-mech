@@ -25,7 +25,7 @@ from io import BytesIO
 from typing import Any, Callable, Dict, Optional, Tuple
 
 import anthropic
-from google import genai  # Use import style from working snippet
+from google import genai
 import openai
 from aea_cli_ipfs.ipfs_utils import IPFSTool
 from google.api_core import exceptions as google_exceptions
@@ -116,7 +116,6 @@ def run(**kwargs) -> Tuple[str, Optional[str], Optional[Dict[str, Any]], Any]:
     api_key = kwargs["api_keys"].get("gemini_api_key")
     tool = kwargs.get("tool")
     counter_callback = kwargs.get("counter_callback", None)
-    # Use model from working snippet
     model_name = "gemini-2.0-flash-exp-image-generation"
 
     if tool not in ALLOWED_TOOLS:
