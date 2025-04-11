@@ -113,9 +113,7 @@ def run(**kwargs) -> Tuple[str, Optional[str], Optional[Dict[str, Any]], Any]:
     """Runs the Google image generation task using genai.Client."""
     prompt = kwargs["prompt"]
     # Use the key name expected by the test script and .env
-    api_key = kwargs["api_keys"].get(
-        "google_api_key"
-    )  # Corresponds to GEMINI_API_KEY in test
+    api_key = kwargs["api_keys"].get("gemini_api_key")
     tool = kwargs.get("tool")
     counter_callback = kwargs.get("counter_callback", None)
     # Use model from working snippet
