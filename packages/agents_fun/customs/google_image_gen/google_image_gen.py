@@ -143,10 +143,8 @@ def run(**kwargs) -> Tuple[str, Optional[str], Optional[Dict[str, Any]], Any]:
         response = client.models.generate_content(
             model=model_name,
             contents=prompt,
-            # Request both Text and Image modalities as per working snippet
             config=types.GenerateContentConfig(response_modalities=["Text", "Image"]),
-            # generation_config is part of GenerateContentConfig now if needed
-            # generation_config=types.GenerationConfig(candidate_count=1) # Example
+
         )
 
         if not response.candidates or not response.candidates[0].content.parts:
@@ -159,7 +157,6 @@ def run(**kwargs) -> Tuple[str, Optional[str], Optional[Dict[str, Any]], Any]:
 
         image_part = None
         for part in response.candidates[0].content.parts:
-            # Directly check for inline_data as per working snippet
             if hasattr(part, "inline_data") and part.inline_data.mime_type.startswith(
                 "image/"
             ):
