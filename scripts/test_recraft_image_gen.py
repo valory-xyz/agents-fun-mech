@@ -2,7 +2,7 @@ import os
 import json
 from typing import Dict, Optional
 
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 
 # Import the run function from your tool
 from packages.agents_fun.customs.recraft_image_gen.recraft_image_gen import run
@@ -29,7 +29,7 @@ class KeyChain:
 
 
 if __name__ == "__main__":
-    # load_dotenv()
+    load_dotenv()
 
     # Get API key from environment variable
     recraft_api_key = os.getenv("RECRAFT_API_KEY")
