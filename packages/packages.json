@@ -2,10 +2,10 @@
     "dev": {
         "custom/agents_fun/short_maker/0.1.0": "bafybeidrbqt2mgrjqxyd7mff7dbwsxqjh5z3ix3l656yn5my573hclzmd4",
         "custom/agents_fun/stability_ai_request/0.1.0": "bafybeidfyz4tqvx544gausycg6o5o2arbfbezpllvsf5taq6kgkt3gl7xy",
-        "custom/agents_fun/google_image_gen/0.1.0": "bafybeichfiu76ufo4skzsj6nrhjrhtvfem6dwvfyezk447hsckt4n44dje",
+        "custom/agents_fun/google_image_gen/0.1.0": "bafybeiban7mlbd5som7ugnf5hagyqxtfn5oecvrd4gbukl22tzbn44hdfy",
         "custom/agents_fun/recraft_image_gen/0.1.0": "bafybeigujorjifltpzsxk7vtblqd5icpsqd3h7eizxzfxjprw56wxrnux4",
-        "agent/valory/mech/0.1.0": "bafybeibw4llvdguqwgsumlbxi6mquhxw7hfdw5z6zfhdlqcxjj4epwuz4a",
-        "service/valory/mech/0.1.0": "bafybeig62qbixmldg4bgmxeglfnveitmz74wkkokaqpw27bj2e7g5w7uri"
+        "agent/valory/mech/0.1.0": "bafybeici5jwtb664pdsb352wjqxnz3rtjiwhfz4efrtajuucqz6bdbs3u4",
+        "service/valory/mech/0.1.0": "bafybeie2cs67uidmxeje5kb565zrubiuzzschkswsc2fxjyzmlemkzrele"
     },
     "third_party": {
         "protocol/valory/acn_data_share/0.1.0": "bafybeih5ydonnvrwvy2ygfqgfabkr47s4yw3uqxztmwyfprulwfsoe7ipq",

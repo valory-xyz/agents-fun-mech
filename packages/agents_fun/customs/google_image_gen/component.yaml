@@ -6,7 +6,7 @@ description: A tool to generate images from text using Google Generative AI.
 license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
-  __init__.py: bafybeihlmymn5jmj4a6jbevycd6xwqatge3ts6x7ryeaycdp7abqsncsam
+  __init__.py: bafybeidnpzfuhbztaogflzlzwi7g7oyt2t5pcx6ayl5xuuixsq2nbt3vcu
   google_image_gen.py: bafybeie4hw7r7wjc25gmvd4i5qrjkwzszv22jkoj4c7r5ldnlnyonxbkwm
 fingerprint_ignore_patterns: []
 entry_point: google_image_gen.py
