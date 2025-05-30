@@ -108,16 +108,10 @@ def with_key_rotation(func: Callable):
     return wrapper
 
 
-@with_key_rotation
-def run(**kwargs) -> Tuple[str, Optional[str], Optional[Dict[str, Any]], Any]:
-    """Runs the Google image generation task using genai.Client."""
-    prompt = kwargs["prompt"]
-    # Use the key name expected by the test script and .env
-    api_key = kwargs["api_keys"].get("gemini_api_key")
-    tool = kwargs.get("tool")
-    counter_callback = kwargs.get("counter_callback", None)
-    model_name = "imagen-3.0-generate-002"
-
+def _validate_inputs(
+    tool: str, api_key: Optional[str], prompt: str, counter_callback: Any
+) -> Optional[Tuple[str, str, None, Any]]:
+    """Validate tool and API key."""
     if tool not in ALLOWED_TOOLS:
         return (
             f"Tool {tool} is not supported by this agent.",
@@ -133,69 +127,102 @@ def run(**kwargs) -> Tuple[str, Optional[str], Optional[Dict[str, Any]], Any]:
             None,
             counter_callback,
         )
+    return None
 
-    try:
-        # Initialize client
-        client = genai.Client(api_key=api_key)
 
-        # Generate content using client.models.generate_images
-        response = client.models.generate_images(
-            model=model_name,  # Using the model_name from your script
-            prompt=prompt,
-            # config=types.GenerateImagesConfig(number_of_images=1) # Optional: if you need to explicitly ask for 1 image
+def _generate_image_from_google_api(
+    client: genai.Client, prompt: str, model_name: str, counter_callback: Any
+) -> Tuple[Optional[bytes], Optional[Tuple[str, str, None, Any]]]:
+    """Generates image data using the Google API and handles initial response validation."""
+    response = client.models.generate_images(
+        model=model_name,
+        prompt=prompt,
+    )
+
+    if not response.generated_images:
+        return None, (
+            "No image data found in the response (generated_images is empty).",
+            prompt,
+            None,
+            counter_callback,
         )
 
-        if not response.generated_images:
-            return (
-                "No image data found in the response (generated_images is empty).",
-                prompt,
-                None,
-                counter_callback,
-            )
+    first_generated_image = response.generated_images[0]
 
-        # Assuming we take the first generated image
-        first_generated_image = response.generated_images[0]
+    if not hasattr(first_generated_image, "image") or not hasattr(
+        first_generated_image.image, "image_bytes"
+    ):
+        return None, (
+            "Image data structure is not as expected.",
+            prompt,
+            None,
+            counter_callback,
+        )
+    return first_generated_image.image.image_bytes, None
 
-        if not hasattr(first_generated_image, "image") or not hasattr(
-            first_generated_image.image, "image_bytes"
-        ):
-            return (
-                "Image data structure is not as expected.",
-                prompt,
-                None,
-                counter_callback,
-            )
 
-        image_data = first_generated_image.image.image_bytes
-
-        # Process the image data
+def _save_image_and_upload_to_ipfs(
+    image_data: bytes, prompt: str, model_name: str, counter_callback: Any
+) -> Tuple[str, Optional[str], Optional[Dict[str, Any]], Any]:
+    """Saves the image data to a temporary file, uploads to IPFS, and cleans up."""
+    temp_image_path = f"temp_generated_image_{os.getpid()}.png"
+    try:
         image = Image.open(BytesIO(image_data))
-        # Use a unique temp file name if running tests concurrently
-        temp_image_path = f"temp_generated_image_{os.getpid()}.png"
         image.save(temp_image_path)
 
-        # Upload to IPFS
-        try:
-            ipfs_tool = IPFSTool()
-            _, image_hash, _ = ipfs_tool.add(temp_image_path)
-        except FileNotFoundError:
-            # Clean up temp file even if IPFS fails
-            if os.path.exists(temp_image_path):
-                os.remove(temp_image_path)
+        ipfs_tool = IPFSTool()
+        _, image_hash, _ = ipfs_tool.add(temp_image_path)
+
+        result_data = {"image_hash": image_hash, "prompt": prompt, "model": model_name}
+        return json.dumps(result_data), prompt, None, counter_callback
+    except FileNotFoundError:
+        return (
+            "IPFS tool not found or not configured correctly.",
+            prompt,
+            None,
+            counter_callback,
+        )
+    finally:
+        if os.path.exists(temp_image_path):
+            os.remove(temp_image_path)
+
+
+@with_key_rotation
+def run(**kwargs) -> Tuple[str, Optional[str], Optional[Dict[str, Any]], Any]:
+    """Runs the Google image generation task using genai.Client."""
+    prompt = kwargs["prompt"]
+    api_keys = kwargs["api_keys"]
+    api_key = api_keys.get("gemini_api_key")
+    tool = kwargs.get("tool")
+    counter_callback = kwargs.get("counter_callback", None)
+    model_name = "imagen-3.0-generate-002"
+
+    validation_error = _validate_inputs(tool, api_key, prompt, counter_callback)
+    if validation_error:
+        return validation_error
+
+    try:
+        client = genai.Client(api_key=api_key)
+
+        image_data, error_response = _generate_image_from_google_api(
+            client, prompt, model_name, counter_callback
+        )
+        if error_response:
+            return error_response
+
+        if (
+            image_data is None
+        ):  # Should not happen if error_response is None, but as a safeguard
             return (
-                "IPFS tool not found or not configured correctly.",
+                "Failed to generate image data without specific error.",
                 prompt,
                 None,
                 counter_callback,
             )
-        finally:
-            # Ensure temporary file is always removed
-            if os.path.exists(temp_image_path):
-                os.remove(temp_image_path)
 
-        # Prepare result
-        result_data = {"image_hash": image_hash, "prompt": prompt, "model": model_name}
-        return json.dumps(result_data), prompt, None, counter_callback
+        return _save_image_and_upload_to_ipfs(
+            image_data, prompt, model_name, counter_callback
+        )
 
     except google_exceptions.GoogleAPIError as e:
         print(f"Google API error: {e}")
@@ -203,11 +230,6 @@ def run(**kwargs) -> Tuple[str, Optional[str], Optional[Dict[str, Any]], Any]:
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
         # Ensure temp file is cleaned up on unexpected error if it exists
-        if "temp_image_path" in locals() and os.path.exists(temp_image_path):
-            try:
-                os.remove(temp_image_path)
-            except OSError as remove_err:
-                print(
-                    f"Error removing temp file during exception handling: {remove_err}"
-                )
+        # temp_image_path is local to _save_image_and_upload_to_ipfs, so direct access here is not possible
+        # Consider if this cleanup is still needed here or if it's fully handled in _save_image_and_upload_to_ipfs
         return f"An error occurred: {e}", prompt, None, counter_callback
