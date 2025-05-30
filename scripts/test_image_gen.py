@@ -46,7 +46,7 @@ if __name__ == "__main__":
     kwargs = {
         "prompt": "Luffy in cyberpunk 2077 universe, please return image in square format",
         "api_keys": api_keys,
-        "tool": "google-image-gen",  # Make sure this matches ALLOWED_TOOLS
+        "tool": "google-imagen",  # Make sure this matches ALLOWED_TOOLS
         "counter_callback": None,  # Optional callback if your tool uses it
     }
 

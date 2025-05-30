@@ -14,12 +14,12 @@ callable: run
 
 dependencies:
   google-genai:
-    version: ~=0.8.4
+    version: '>=1.17.0, <2.0.0'
   Pillow:
     version: ~=10.4.0
   open-aea-cli-ipfs:
-    version: ~=1.63.0
+    version: ==1.63.0
   anthropic:
-    version: ~=0.21.3
+    version: ==0.21.3
   openai:
-    version: ~=1.30.2
+    version: ==1.30.2
