@@ -105,7 +105,7 @@ dependencies:
     version: ==0.28.1
   google-genai:
     version: ==1.17.0
-  Pillow:
+  pillow:
     version: ==11.2.1
 default_connection: null
 ---

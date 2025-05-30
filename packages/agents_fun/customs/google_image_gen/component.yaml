@@ -14,7 +14,7 @@ callable: run
 dependencies:
   google-genai:
     version: ==1.17.0
-  Pillow:
+  pillow:
     version: ~=10.4.0
   open-aea-cli-ipfs:
     version: ==1.63.0

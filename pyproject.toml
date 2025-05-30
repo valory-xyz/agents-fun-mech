@@ -57,7 +57,7 @@ google-api-python-client = "==2.130.0"
 tiktoken = "==0.7.0"
 httpx = "==0.28.1"
 google-genai = "==1.17.0"
-Pillow = "11.2.1"
+pillow = "11.2.1"
 
 [tool.poetry.group.dev.dependencies]
 setuptools = "^78.0.1"

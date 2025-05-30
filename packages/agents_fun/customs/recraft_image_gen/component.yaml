@@ -12,7 +12,7 @@ fingerprint_ignore_patterns: []
 entry_point: recraft_image_gen.py
 callable: run
 dependencies:
-  Pillow:
+  pillow:
     version: ~=10.4.0
   open-aea-cli-ipfs:
     version: ==1.63.0
