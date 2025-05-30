@@ -88,21 +88,23 @@ dependencies:
   open-aea-ledger-ethereum:
     version: ==1.63.0
   openai:
-    version: ==1.30.2
+    version: ==1.82.0
   replicate:
-    version: ==0.15.7
+    version: ==0.28.0
   moviepy:
     version: ==1.0.3
   anthropic:
     version: ==0.21.3
   google-api-python-client:
-    version: ==1.12.1
+    version: ==2.130.0
   tiktoken:
     version: ==0.7.0
   requests:
     version: ==2.28.2
   httpx:
-    version: ==0.25.2
+    version: ==0.28.1
+  google-genai:
+    version: ==1.17.0
 default_connection: null
 ---
 public_id: valory/websocket_client:0.1.0:bafybeiexove4oqyhoae5xmk2hilskthosov5imdp65olpgj3cfrepbouyy

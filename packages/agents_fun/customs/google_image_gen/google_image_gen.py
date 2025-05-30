@@ -26,10 +26,10 @@ from typing import Any, Callable, Dict, Optional, Tuple
 
 import anthropic
 from google import genai
+from google.genai import types
 import openai
 from aea_cli_ipfs.ipfs_utils import IPFSTool
 from google.api_core import exceptions as google_exceptions
-from google.genai import types  # Keep this for types.GenerateContentConfig
 from PIL import Image
 
 # Define MechResponse type alias matching the other tools
@@ -37,7 +37,7 @@ MechResponse = Tuple[str, Optional[str], Optional[Dict[str, Any]], Any, Any]
 
 # Define allowed tools for this module
 ALLOWED_TOOLS = [
-    "google-image-gen",
+    "google-imagen",
 ]
 
 
@@ -116,7 +116,7 @@ def run(**kwargs) -> Tuple[str, Optional[str], Optional[Dict[str, Any]], Any]:
     api_key = kwargs["api_keys"].get("gemini_api_key")
     tool = kwargs.get("tool")
     counter_callback = kwargs.get("counter_callback", None)
-    model_name = "gemini-2.0-flash-exp-image-generation"
+    model_name = "imagen-3.0-generate-002"
 
     if tool not in ALLOWED_TOOLS:
         return (
@@ -135,43 +135,40 @@ def run(**kwargs) -> Tuple[str, Optional[str], Optional[Dict[str, Any]], Any]:
         )
 
     try:
-        # Initialize client using the working snippet method
+        # Initialize client
         client = genai.Client(api_key=api_key)
 
-        # Generate content using client.models.generate_content
-        response = client.models.generate_content(
-            model=model_name,
-            contents=prompt,
-            config=types.GenerateContentConfig(response_modalities=["Text", "Image"]),
-
+        # Generate content using client.models.generate_images
+        response = client.models.generate_images(
+            model=model_name,  # Using the model_name from your script
+            prompt=prompt,
+            # config=types.GenerateImagesConfig(number_of_images=1) # Optional: if you need to explicitly ask for 1 image
         )
 
-        if not response.candidates or not response.candidates[0].content.parts:
+        if not response.generated_images:
             return (
-                "No image data found in the response candidates.",
+                "No image data found in the response (generated_images is empty).",
                 prompt,
                 None,
                 counter_callback,
             )
 
-        image_part = None
-        for part in response.candidates[0].content.parts:
-            if hasattr(part, "inline_data") and part.inline_data.mime_type.startswith(
-                "image/"
-            ):
-                image_part = part.inline_data
-                break
+        # Assuming we take the first generated image
+        first_generated_image = response.generated_images[0]
 
-        if image_part is None:
+        if not hasattr(first_generated_image, "image") or not hasattr(
+            first_generated_image.image, "image_bytes"
+        ):
             return (
-                "No image data found in response parts (checked inline_data).",
+                "Image data structure is not as expected.",
                 prompt,
                 None,
                 counter_callback,
             )
+
+        image_data = first_generated_image.image.image_bytes
 
         # Process the image data
-        image_data = image_part.data
         image = Image.open(BytesIO(image_data))
         # Use a unique temp file name if running tests concurrently
         temp_image_path = f"temp_generated_image_{os.getpid()}.png"

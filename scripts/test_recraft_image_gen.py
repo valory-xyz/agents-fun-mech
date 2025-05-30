@@ -43,7 +43,7 @@ if __name__ == "__main__":
 
     # Sample input parameters
     kwargs = {
-        "prompt": "Luffy in cyberpunk 2077 night city",
+        "prompt": "popeye in spain",
         "api_keys": api_keys,
         "tool": "recraft-image-gen",  # Make sure this matches ALLOWED_TOOLS
         "counter_callback": None,  # Optional callback if your tool uses it
