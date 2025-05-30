@@ -137,6 +137,7 @@ def _generate_image_from_google_api(
     response = client.models.generate_images(
         model=model_name,
         prompt=prompt,
+        config=types.GenerateImagesConfig(number_of_images=1),
     )
 
     if not response.generated_images:
