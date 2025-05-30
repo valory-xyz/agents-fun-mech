@@ -62,7 +62,7 @@ if __name__ == "__main__":
 
     # Sample input parameters
     kwargs = {
-        "prompt": "Ethereum Blockchain X messi collab",
+        "prompt": "cat playing with a ball",
         "api_keys": api_keys_wrapper,  # Use the wrapper object
     }
 
