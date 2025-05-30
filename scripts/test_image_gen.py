@@ -44,7 +44,7 @@ if __name__ == "__main__":
 
     # Sample input parameters
     kwargs = {
-        "prompt": "Luffy in cyberpunk 2077 universe, please return image in square format",
+        "prompt": "Zoro in cyberpunk 2077 universe",
         "api_keys": api_keys,
         "tool": "google-imagen",  # Make sure this matches ALLOWED_TOOLS
         "counter_callback": None,  # Optional callback if your tool uses it
