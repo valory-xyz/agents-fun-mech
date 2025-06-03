@@ -7,7 +7,7 @@ on:
 jobs:
   publish-packages:
     name: Push Packages
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         os: [ubuntu-latest]
@@ -125,7 +125,7 @@ jobs:
           # for staging
           export IP_ADDR=$(dig +short balancer.tcp.propel.staging.autonolas.tech)
           echo -e "\n$IP_ADDR\tapp.propel.staging.valory.xyz\n"  | sudo tee -a /etc/hosts
-          
+
           # for prod
           export IP_ADDR=$(dig +short balancer.tcp.propel.autonolas.tech)
           echo -e "\n$IP_ADDR\tapp.propel.valory.xyz\n"  | sudo tee -a /etc/hosts
@@ -182,7 +182,7 @@ jobs:
           # for staging
           export IP_ADDR=$(dig +short balancer.tcp.propel.staging.autonolas.tech)
           echo -e "\n$IP_ADDR\tapp.propel.staging.valory.xyz\n"  | sudo tee -a /etc/hosts
-          
+
           # for prod
           export IP_ADDR=$(dig +short balancer.tcp.propel.autonolas.tech)
           echo -e "\n$IP_ADDR\tapp.propel.valory.xyz\n"  | sudo tee -a /etc/hosts
