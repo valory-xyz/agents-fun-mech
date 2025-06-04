@@ -83,6 +83,8 @@ logging_config:
 dependencies:
   aiohttp:
     version: <4.0.0,>=3.8.5
+  typing_extensions:
+    version: ==4.12.2
   hypothesis:
     version: ==6.21.6
   open-aea-ledger-ethereum:
