@@ -31,6 +31,8 @@ import openai
 from aea_cli_ipfs.ipfs_utils import IPFSTool
 from google.api_core import exceptions as google_exceptions
 from PIL import Image
+from googleapiclient.errors import HttpError as GoogleApiClientHttpError
+
 
 # Define MechResponse type alias matching the other tools
 MechResponse = Tuple[str, Optional[str], Optional[Dict[str, Any]], Any, Any]
@@ -41,69 +43,52 @@ ALLOWED_TOOLS = [
 ]
 
 
-# Replicate the key rotation decorator from other tools
 def with_key_rotation(func: Callable):
-    """Decorator for handling API key rotation and retries."""
-
     @functools.wraps(func)
     def wrapper(*args, **kwargs) -> MechResponse:
+        # this is expected to be a KeyChain object,
+        # although it is not explicitly typed as such
         api_keys = kwargs["api_keys"]
-        # Ensure api_keys object has the expected methods
-        if (
-            not hasattr(api_keys, "max_retries")
-            or not hasattr(api_keys, "rotate")
-            or not hasattr(api_keys, "get")
-        ):
-            error_msg = "api_keys object does not have required methods (max_retries, rotate, get)"
-            prompt_val = kwargs.get("prompt", "N/A")
-            callback_val = kwargs.get("counter_callback", None)
-            return error_msg, prompt_val, None, callback_val, None  # Return 5 elements
-
         retries_left: Dict[str, int] = api_keys.max_retries()
 
         def execute() -> MechResponse:
-            """Execute the function with retries."""
+            """Retry the function with a new key."""
             try:
                 result = func(*args, **kwargs)
                 return result + (api_keys,)
-            except (
-                anthropic.RateLimitError,
-                openai.RateLimitError,
-                google_exceptions.ResourceExhausted,
-                google_exceptions.TooManyRequests,
-            ) as e:
-                service = "google_api_key"
-                if isinstance(e, anthropic.RateLimitError):
-                    service = "anthropic"
-                elif isinstance(e, openai.RateLimitError):
-                    if retries_left["openai"] <= 0 and retries_left["openrouter"] <= 0:
-                        raise e
-                    retries_left["openai"] -= 1
-                    retries_left["openrouter"] -= 1
-                    api_keys.rotate("openai")
-                    api_keys.rotate("openrouter")
-                    return execute()
-
-                if retries_left.get(service, 0) <= 0:
-                    print(f"No retries left for service: {service}")
+            except anthropic.RateLimitError as e:
+                # try with a new key again
+                service = "anthropic"
+                if retries_left[service] <= 0:
                     raise e
-
                 retries_left[service] -= 1
-                print(
-                    f"Rate limit error for {service}. Retries left: {retries_left[service]}. Rotating key."
-                )
+                api_keys.rotate(service)
+                return execute()
+            except openai.RateLimitError as e:
+                # try with a new key again
+                if retries_left["openai"] <= 0 and retries_left["openrouter"] <= 0:
+                    raise e
+                retries_left["openai"] -= 1
+                retries_left["openrouter"] -= 1
+                api_keys.rotate("openai")
+                api_keys.rotate("openrouter")
+                return execute()
+            except GoogleApiClientHttpError as e:
+                # try with a new key again
+                rate_limit_exceeded_code = 429
+                if e.status_code != rate_limit_exceeded_code:
+                    raise e
+                service = "google_api_key"
+                if retries_left[service] <= 0:
+                    raise e
+                retries_left[service] -= 1
                 api_keys.rotate(service)
                 return execute()
             except Exception as e:
-                print(f"An unexpected error occurred: {e}")
-                error_response = str(e)
-                prompt_value = kwargs.get(
-                    "prompt", "Prompt not available in error context"
-                )
-                callback_value = kwargs.get("counter_callback", None)
-                return error_response, prompt_value, None, callback_value, api_keys
+                return str(e), "", None, None, api_keys
 
-        return execute()
+        mech_response = execute()
+        return mech_response
 
     return wrapper
 
