@@ -178,7 +178,7 @@ def run(**kwargs) -> Tuple[str, Optional[str], Optional[Dict[str, Any]], Any]:
     """Runs the Google image generation task using genai.Client."""
     prompt = kwargs["prompt"]
     api_keys = kwargs["api_keys"]
-    api_key = api_keys.get("gemini_api_key")
+    api_key = api_keys.get("gemini_api_key", None)
     tool = kwargs.get("tool")
     counter_callback = kwargs.get("counter_callback", None)
     model_name = "imagen-3.0-generate-002"
