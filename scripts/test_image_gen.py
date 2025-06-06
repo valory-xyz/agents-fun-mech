@@ -5,26 +5,8 @@ from dotenv import load_dotenv
 
 # Import the run function from your tool
 from packages.agents_fun.customs.google_image_gen.google_image_gen import run
-
-
-# Minimal KeyChain class to mimic the expected structure
-class KeyChain:
-    def __init__(self, api_keys: Dict[str, Optional[str]]):
-        self._keys = api_keys
-        self._max_retries = {k: 1 for k in api_keys}  # Simple retry count
-
-    def get(self, key_name: str) -> Optional[str]:
-        return self._keys.get(key_name)
-
-    def max_retries(self) -> Dict[str, int]:
-        # Return a copy to prevent modification
-        return self._max_retries.copy()
-
-    def rotate(self, service: str):
-        # Placeholder for rotation logic if needed for testing complex scenarios
-        print(f"[KeyChain] Rotating key for {service} (placeholder)")
-        # In a real scenario, this would fetch a new key
-        pass
+# Import the robust KeyChain class
+from packages.valory.skills.task_execution.utils.apis import KeyChain
 
 
 # Test the google_image_gen tool
@@ -33,21 +15,40 @@ if __name__ == "__main__":
     load_dotenv()
 
     # Get API key from environment variable
-    gemini_api_key = os.getenv("GEMINI_API_KEY")
-    print(f"gemini_api_key: {gemini_api_key}")
-    if not gemini_api_key:
+    gemini_api_key_str = os.getenv("GEMINI_API_KEY")
+    print(f"GEMINI_API_KEY from env: {gemini_api_key_str}")
+    if not gemini_api_key_str:
         print("Error: GEMINI_API_KEY environment variable not set.")
         exit(1)
 
-    # Create the KeyChain object
-    api_keys = KeyChain({"gemini_api_key": gemini_api_key})
+    # KeyChain expects a dictionary where values are lists of keys.
+    # For a single key, it should be in a list.
+    services_config = {
+        "gemini_api_key": [gemini_api_key_str]
+    }
+
+    # Filter out services with no valid keys to prevent KeyChain initialization error
+    # if an env var for a secondary service isn't set.
+    valid_services_config = {
+        s: k_list
+        for s, k_list in services_config.items()
+        if k_list and k_list[0] is not None
+    }
+
+    if not valid_services_config.get("gemini_api_key"):
+        print(
+            "Error: GEMINI_API_KEY was not properly configured for KeyChain (e.g., it's None even after os.getenv)."
+        )
+        exit(1)
+
+    api_keys_instance = KeyChain(valid_services_config)
 
     # Sample input parameters
     kwargs = {
         "prompt": "Zoro in cyberpunk 2077 universe",
-        "api_keys": api_keys,
-        "tool": "google-imagen",  # Make sure this matches ALLOWED_TOOLS
-        "counter_callback": None,  # Optional callback if your tool uses it
+        "api_keys": api_keys_instance, 
+        "tool": "google_image_gen",  
+        "counter_callback": None,  
     }
 
     print(f"Running google_image_gen with prompt: {kwargs['prompt']}")

@@ -37,11 +37,9 @@ MechResponse = Tuple[str, Optional[str], Optional[Dict[str, Any]], Any, Any]
 
 # Define allowed tools for this module
 ALLOWED_TOOLS = [
-    "google-imagen",
+    "google_image_gen",
 ]
 
-
-# Replicate the key rotation decorator from other tools
 def with_key_rotation(func: Callable):
     """Decorator for handling API key rotation and retries."""
 
@@ -92,6 +90,21 @@ def with_key_rotation(func: Callable):
                 print(
                     f"Rate limit error for {service}. Retries left: {retries_left[service]}. Rotating key."
                 )
+                api_keys.rotate(service)
+                return execute()
+            except (
+                google_exceptions.GoogleAPIError
+            ) as e:  # Specific catch for other GoogleAPIErrors
+                # If not a 500 error, or no code attribute, re-raise immediately
+                if not hasattr(e, "code") or e.code != 500:
+                    raise e
+                service = "google_api_key"
+                # If no retries left for this service, raise.
+                if retries_left.get(service, 0) <= 0:
+                    raise e
+
+                # Retries are available, proceed with retry logic.
+                retries_left[service] -= 1
                 api_keys.rotate(service)
                 return execute()
             except Exception as e:
@@ -193,7 +206,7 @@ def run(**kwargs) -> Tuple[str, Optional[str], Optional[Dict[str, Any]], Any]:
     """Runs the Google image generation task using genai.Client."""
     prompt = kwargs["prompt"]
     api_keys = kwargs["api_keys"]
-    api_key = api_keys.get("gemini_api_key")
+    api_key = api_keys.get("gemini_api_key", None)
     tool = kwargs.get("tool")
     counter_callback = kwargs.get("counter_callback", None)
     model_name = "imagen-3.0-generate-002"
@@ -230,7 +243,4 @@ def run(**kwargs) -> Tuple[str, Optional[str], Optional[Dict[str, Any]], Any]:
         return f"Google API error: {e}", prompt, None, counter_callback
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
-        # Ensure temp file is cleaned up on unexpected error if it exists
-        # temp_image_path is local to _save_image_and_upload_to_ipfs, so direct access here is not possible
-        # Consider if this cleanup is still needed here or if it's fully handled in _save_image_and_upload_to_ipfs
         return f"An error occurred: {e}", prompt, None, counter_callback
