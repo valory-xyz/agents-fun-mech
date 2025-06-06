@@ -95,25 +95,18 @@ def with_key_rotation(func: Callable):
             except (
                 google_exceptions.GoogleAPIError
             ) as e:  # Specific catch for other GoogleAPIErrors
-                # Check for the specific DATA_LOSS 500 error
-                if hasattr(e, "code") and e.code == 500:
-                    service = "google_api_key"
-                    if retries_left.get(service, 0) <= 0:
-                        print(
-                            f"No retries left for Google API Error 500 (service: {service}). Error: {e}"
-                        )
-                        raise e
-
-                    retries_left[service] -= 1
-                    print(
-                        f"Google API Error 500 for {service}. Retries left: {retries_left[service]}. Rotating key and retrying. Error: {e}"
-                    )
-                    api_keys.rotate(service)
-                    return execute()
-                else:
-                    # If it's a different GoogleAPIError, re-raise to be caught by the generic handler or propagate
-                    print(f"Unhandled GoogleAPIError: {e}")
+                # If not a 500 error, or no code attribute, re-raise immediately
+                if not hasattr(e, "code") or e.code != 500:
                     raise e
+                service = "google_api_key"
+                # If no retries left for this service, raise.
+                if retries_left.get(service, 0) <= 0:
+                    raise e
+
+                # Retries are available, proceed with retry logic.
+                retries_left[service] -= 1
+                api_keys.rotate(service)
+                return execute()
             except Exception as e:
                 print(f"An unexpected error occurred: {e}")
                 error_response = str(e)
