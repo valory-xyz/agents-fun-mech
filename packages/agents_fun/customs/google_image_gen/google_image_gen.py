@@ -37,11 +37,9 @@ MechResponse = Tuple[str, Optional[str], Optional[Dict[str, Any]], Any, Any]
 
 # Define allowed tools for this module
 ALLOWED_TOOLS = [
-    "google-imagen",
+    "google_image_gen",
 ]
 
-
-# Replicate the key rotation decorator from other tools
 def with_key_rotation(func: Callable):
     """Decorator for handling API key rotation and retries."""
 
@@ -94,6 +92,28 @@ def with_key_rotation(func: Callable):
                 )
                 api_keys.rotate(service)
                 return execute()
+            except (
+                google_exceptions.GoogleAPIError
+            ) as e:  # Specific catch for other GoogleAPIErrors
+                # Check for the specific DATA_LOSS 500 error
+                if hasattr(e, "code") and e.code == 500:
+                    service = "google_api_key"
+                    if retries_left.get(service, 0) <= 0:
+                        print(
+                            f"No retries left for Google API Error 500 (service: {service}). Error: {e}"
+                        )
+                        raise e
+
+                    retries_left[service] -= 1
+                    print(
+                        f"Google API Error 500 for {service}. Retries left: {retries_left[service]}. Rotating key and retrying. Error: {e}"
+                    )
+                    api_keys.rotate(service)
+                    return execute()
+                else:
+                    # If it's a different GoogleAPIError, re-raise to be caught by the generic handler or propagate
+                    print(f"Unhandled GoogleAPIError: {e}")
+                    raise e
             except Exception as e:
                 print(f"An unexpected error occurred: {e}")
                 error_response = str(e)

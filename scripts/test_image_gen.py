@@ -25,10 +25,6 @@ if __name__ == "__main__":
     # For a single key, it should be in a list.
     services_config = {
         "gemini_api_key": [gemini_api_key_str]
-        # If your with_key_rotation in google_image_gen.py also handles other
-        # potential errors like openai or anthropic and you want to test that rotation,
-        # you'd add their keys here too, each as a list. For example:
-        # "openai_api_key": [os.getenv("OPENAI_API_KEY")] if os.getenv("OPENAI_API_KEY") else [],
     }
 
     # Filter out services with no valid keys to prevent KeyChain initialization error
@@ -50,9 +46,9 @@ if __name__ == "__main__":
     # Sample input parameters
     kwargs = {
         "prompt": "Zoro in cyberpunk 2077 universe",
-        "api_keys": api_keys_instance,  # Use the new KeyChain instance
-        "tool": "google-imagen",  # Make sure this matches ALLOWED_TOOLS
-        "counter_callback": None,  # Optional callback if your tool uses it
+        "api_keys": api_keys_instance, 
+        "tool": "google_image_gen",  
+        "counter_callback": None,  
     }
 
     print(f"Running google_image_gen with prompt: {kwargs['prompt']}")
