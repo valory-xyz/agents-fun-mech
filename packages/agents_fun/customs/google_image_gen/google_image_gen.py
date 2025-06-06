@@ -185,7 +185,7 @@ def _save_image_and_upload_to_ipfs(
         image.save(temp_image_path)
 
         ipfs_tool = IPFSTool()
-        _, image_hash, _ = ipfs_tool.add(temp_image_path)
+        _, image_hash, _ = ipfs_tool.add(temp_image_path, wrap_with_directory=False)
 
         result_data = {"image_hash": image_hash, "prompt": prompt, "model": model_name}
         return json.dumps(result_data), prompt, None, counter_callback
