@@ -1,8 +1,8 @@
-name: google_image_gen
+name: google_video_gen
 author: agents_fun
 version: 0.1.0
 type: custom
-description: A tool to generate images from text using Google Generative AI.
+description: A tool to generate shortvideos from text using Google Generative AI.
 license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
